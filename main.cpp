@@ -62,6 +62,7 @@ int main() {
     ImGui::Separator();
 
     for (int i = 0; i < numberOfProcesses; i++) {
+      ImGui::PushID(i);
       ImGui::Text("%i", i);
       ImGui::NextColumn();
       if (ImGui::InputInt("##Priority", priorities + i)) {
@@ -76,6 +77,7 @@ int main() {
         burstTimes[i] = burstTimes[i] > 0.0f ? burstTimes[i] : 0.0f;
       }
       ImGui::NextColumn();
+      ImGui::PopID();
     }
 
     ImGui::Columns(1);
