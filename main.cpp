@@ -8,6 +8,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#define MAX_SIZE 32
+
 int main() {
   glfwInit();
   GLFWwindow *window =
@@ -33,13 +35,13 @@ int main() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    static bool b = true;
-    static int priority = 0;
-    static float arrivalTime = 0.0f;
-    static float burstTime = 0.0f;
-    static int counter = 0;
+    static bool showDemoWindow = true;
+    static int numberOfProcesses = 0;
+    static int priorities[MAX_SIZE];
+    static float arrivalTimes[MAX_SIZE];
+    static float burstTimes[MAX_SIZE];
 
-    ImGui::ShowDemoWindow(&b);
+    ImGui::ShowDemoWindow(&showDemoWindow);
 
     ImGui::Begin("Scheduler Visualizer");
 
@@ -59,17 +61,26 @@ int main() {
 
     ImGui::Separator();
 
-    ImGui::Text("1");
-    ImGui::NextColumn();
-    ImGui::InputInt("##Priority", &priority);
-    ImGui::NextColumn();
-    ImGui::InputFloat("##Arrival Time", &arrivalTime);
-    ImGui::NextColumn();
-    ImGui::InputFloat("##Burst Time", &burstTime);
-
-    ImGui::Separator();
+    for (int i = 0; i < numberOfProcesses; i++) {
+      ImGui::Text("%i", i);
+      ImGui::NextColumn();
+      ImGui::InputInt("##Priority", priorities + i);
+      ImGui::NextColumn();
+      ImGui::InputFloat("##Arrival Time", arrivalTimes + i);
+      ImGui::NextColumn();
+      ImGui::InputFloat("##Burst Time", burstTimes + i);
+      ImGui::NextColumn();
+    }
 
     ImGui::Columns(1);
+
+    ImGui::Spacing();
+    if (ImGui::Button("Add Process")) {
+      priorities[numberOfProcesses] = numberOfProcesses;
+      arrivalTimes[numberOfProcesses] = (float)numberOfProcesses;
+      burstTimes[numberOfProcesses] = 1.0f;
+      numberOfProcesses++;
+    }
 
     ImGui::End();
 
