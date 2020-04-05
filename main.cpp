@@ -64,11 +64,17 @@ int main() {
     for (int i = 0; i < numberOfProcesses; i++) {
       ImGui::Text("%i", i);
       ImGui::NextColumn();
-      ImGui::InputInt("##Priority", priorities + i);
+      if (ImGui::InputInt("##Priority", priorities + i)) {
+        priorities[i] = priorities[i] > 0 ? priorities[i] : 0;
+      }
       ImGui::NextColumn();
-      ImGui::InputFloat("##Arrival Time", arrivalTimes + i);
+      if (ImGui::InputFloat("##Arrival Time", arrivalTimes + i)) {
+        arrivalTimes[i] = arrivalTimes[i] > 0.0f ? arrivalTimes[i] : 0.0f;
+      }
       ImGui::NextColumn();
-      ImGui::InputFloat("##Burst Time", burstTimes + i);
+      if (ImGui::InputFloat("##Burst Time", burstTimes + i)) {
+        burstTimes[i] = burstTimes[i] > 0.0f ? burstTimes[i] : 0.0f;
+      }
       ImGui::NextColumn();
     }
 
@@ -76,10 +82,12 @@ int main() {
 
     ImGui::Spacing();
     if (ImGui::Button("Add Process")) {
-      priorities[numberOfProcesses] = numberOfProcesses;
-      arrivalTimes[numberOfProcesses] = (float)numberOfProcesses;
-      burstTimes[numberOfProcesses] = 1.0f;
-      numberOfProcesses++;
+      if (numberOfProcesses < MAX_SIZE) {
+        priorities[numberOfProcesses] = numberOfProcesses;
+        arrivalTimes[numberOfProcesses] = (float)numberOfProcesses;
+        burstTimes[numberOfProcesses] = 1.0f;
+        numberOfProcesses++;
+      }
     }
 
     ImGui::End();
