@@ -33,3 +33,6 @@
 
 # IMGUI init file
 imgui.ini
+
+# Build directory
+build
