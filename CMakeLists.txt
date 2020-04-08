@@ -9,6 +9,10 @@ add_library(imgui
   imgui/imgui_widgets.cpp
 )
 
+target_include_directories(imgui
+  PUBLIC imgui
+)
+
 find_package(glfw3 REQUIRED)
 
 add_library(imguiGLFW
@@ -16,12 +20,12 @@ add_library(imguiGLFW
 )
 
 target_include_directories(imguiGLFW
-  PUBLIC imgui
+  PUBLIC imgui/examples
 )
 
 target_link_libraries(imguiGLFW
   PUBLIC imgui
-  PRIVATE glfw
+  PUBLIC glfw
 )
 
 include(FindOpenGL)
@@ -32,29 +36,22 @@ add_library(imguiOpenGL
 )
 
 target_include_directories(imguiOpenGL
-  PUBLIC imgui
+  PUBLIC imgui/examples
 )
 
 target_link_libraries(imguiOpenGL
   PUBLIC imgui
-  PRIVATE OpenGL::GL
-  PRIVATE GLEW::glew
+  PUBLIC OpenGL::GL
+  PUBLIC GLEW::glew
 )
 
 add_executable(schedularVisualizer
   main.cpp
 )
 
-target_include_directories(schedularVisualizer
-  PUBLIC imgui
-  PUBLIC imgui/examples
-)
-
 target_link_libraries(schedularVisualizer
-  PRIVATE imgui
   PRIVATE imguiGLFW
   PRIVATE imguiOpenGL
-  PRIVATE GLEW::glew
 )
 
 target_compile_options(schedularVisualizer
