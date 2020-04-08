@@ -64,15 +64,15 @@ int main() {
       ImGui::PushID(i);
       ImGui::Text("%i", i);
       ImGui::NextColumn();
-      if (ImGui::InputInt("##Priority", priorities + i)) {
+      if (ImGui::DragInt("##Priority", priorities + i)) {
         priorities[i] = priorities[i] > 0 ? priorities[i] : 0;
       }
       ImGui::NextColumn();
-      if (ImGui::InputFloat("##Arrival Time", arrivalTimes + i)) {
+      if (ImGui::DragFloat("##Arrival Time", arrivalTimes + i, 0.005f)) {
         arrivalTimes[i] = arrivalTimes[i] > 0.0f ? arrivalTimes[i] : 0.0f;
       }
       ImGui::NextColumn();
-      if (ImGui::InputFloat("##Burst Time", burstTimes + i)) {
+      if (ImGui::DragFloat("##Burst Time", burstTimes + i, 0.005f)) {
         burstTimes[i] = burstTimes[i] > 0.0f ? burstTimes[i] : 0.0f;
       }
       ImGui::NextColumn();
@@ -90,6 +90,46 @@ int main() {
         numberOfProcesses++;
       }
     }
+    ImGui::Spacing();
+
+    ImGui::Separator();
+
+    ImGui::Spacing();
+    static float timeScale = 100.0f;
+    ImGui::SliderFloat("Time Scale", &timeScale, 0.0f, 100.0f);
+    ImGui::Spacing();
+
+    ImGuiStyle &style = ImGui::GetStyle();
+    float height = ImGui::GetFrameHeightWithSpacing() * numberOfProcesses +
+                   style.ScrollbarSize + style.WindowPadding.y * 2.0f;
+    ImGui::BeginChild("scrolling", ImVec2(0, height), true,
+                      ImGuiWindowFlags_HorizontalScrollbar);
+
+    for (int i = 0; i < numberOfProcesses; i++) {
+      ImGui::PushID(i);
+      ImGui::AlignTextToFramePadding();
+      ImGui::Text("%i", i);
+      ImGui::SameLine();
+      ImGui::Dummy(ImVec2(arrivalTimes[i] * timeScale, 0));
+      ImGui::SameLine();
+      ImGui::Button("", ImVec2(burstTimes[i] * timeScale, 0));
+      if (ImGui::IsItemHovered()) {
+        ImGui::BeginTooltip();
+        ImGui::TextUnformatted("Waiting Time: TODO");
+        ImGui::TextUnformatted("Turnaround Time: TODO");
+        ImGui::TextUnformatted("Reponse Time: TODO");
+        ImGui::EndTooltip();
+      }
+      ImGui::PopID();
+    }
+
+    ImGui::EndChild();
+
+    ImGui::Spacing();
+
+    ImGui::TextUnformatted("Average Waiting Time: TODO");
+    ImGui::TextUnformatted("Average Turnaround Time: TODO");
+    ImGui::TextUnformatted("Average Reponse Time: TODO");
 
     ImGui::End();
 
