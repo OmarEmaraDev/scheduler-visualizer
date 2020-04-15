@@ -17,6 +17,18 @@ typedef struct {
   float scheduledTime;
 } Process;
 
+inline float computeProcessWaitingTime(Process *process) {
+  return process->scheduledTime - process->arrivalTime;
+}
+
+inline float computeProcessTurnAroundTime(Process *process) {
+  return computeProcessWaitingTime(process) + process->burstTime;
+}
+
+inline float computeProcessResponseTime(Process *process) {
+  return computeProcessWaitingTime(process);
+}
+
 int main() {
   glfwInit();
   GLFWwindow *window =
@@ -67,24 +79,23 @@ int main() {
     ImGui::Separator();
 
     for (int i = 0; i < numberOfProcesses; i++) {
+      Process *process = processes + i;
       ImGui::PushID(i);
       ImGui::Text("%i", i);
-      processes[i].PID = i;
+      process->PID = i;
       ImGui::NextColumn();
-      if (ImGui::DragInt("##Priority", &processes[i].priority)) {
-        processes[i].priority =
-            processes[i].priority > 0 ? processes[i].priority : 0;
+      if (ImGui::DragInt("##Priority", &process->priority)) {
+        process->priority = process->priority > 0 ? process->priority : 0;
       }
       ImGui::NextColumn();
-      if (ImGui::DragFloat("##Arrival Time", &processes[i].arrivalTime,
-                           0.005f)) {
-        processes[i].arrivalTime =
-            processes[i].arrivalTime > 0.0f ? processes[i].arrivalTime : 0.0f;
+      if (ImGui::DragFloat("##Arrival Time", &process->arrivalTime, 0.005f)) {
+        process->arrivalTime =
+            process->arrivalTime > 0.0f ? process->arrivalTime : 0.0f;
       }
       ImGui::NextColumn();
-      if (ImGui::DragFloat("##Burst Time", &processes[i].burstTime, 0.005f)) {
-        processes[i].burstTime =
-            processes[i].burstTime > 0.0f ? processes[i].burstTime : 0.0f;
+      if (ImGui::DragFloat("##Burst Time", &process->burstTime, 0.005f)) {
+        process->burstTime =
+            process->burstTime > 0.0f ? process->burstTime : 0.0f;
       }
       ImGui::NextColumn();
       ImGui::PopID();
@@ -95,9 +106,10 @@ int main() {
     ImGui::Spacing();
     if (ImGui::Button("Add Process")) {
       if (numberOfProcesses < MAX_SIZE) {
-        processes[numberOfProcesses].priority = numberOfProcesses;
-        processes[numberOfProcesses].arrivalTime = (float)numberOfProcesses;
-        processes[numberOfProcesses].burstTime = 1.0f;
+        Process *process = processes + numberOfProcesses;
+        process->priority = numberOfProcesses;
+        process->arrivalTime = (float)numberOfProcesses;
+        process->burstTime = 1.0f;
         numberOfProcesses++;
       }
     }
@@ -117,18 +129,20 @@ int main() {
                       ImGuiWindowFlags_HorizontalScrollbar);
 
     for (int i = 0; i < numberOfProcesses; i++) {
+      Process process = processes[i];
       ImGui::PushID(i);
       ImGui::AlignTextToFramePadding();
       ImGui::Text("%i", i);
       ImGui::SameLine();
-      ImGui::Dummy(ImVec2(processes[i].arrivalTime * timeScale, 0));
+      ImGui::Dummy(ImVec2(process.arrivalTime * timeScale, 0));
       ImGui::SameLine();
-      ImGui::Button("", ImVec2(processes[i].burstTime * timeScale, 0));
+      ImGui::Button("", ImVec2(process.burstTime * timeScale, 0));
       if (ImGui::IsItemHovered()) {
         ImGui::BeginTooltip();
-        ImGui::TextUnformatted("Waiting Time: TODO");
-        ImGui::TextUnformatted("Turnaround Time: TODO");
-        ImGui::TextUnformatted("Reponse Time: TODO");
+        ImGui::Text("Waiting Time: %.2f", computeProcessWaitingTime(&process));
+        ImGui::Text("Turn Around Time: %.2f",
+                    computeProcessTurnAroundTime(&process));
+        ImGui::Text("Reponse Time: %.2f", computeProcessResponseTime(&process));
         ImGui::EndTooltip();
       }
       ImGui::PopID();
