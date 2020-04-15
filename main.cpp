@@ -29,6 +29,33 @@ inline float computeProcessResponseTime(Process *process) {
   return computeProcessWaitingTime(process);
 }
 
+float computeAverageProcessWaitingTime(Process processes[MAX_SIZE],
+                                       int numberOfProcesses) {
+  float averageWaitingTime = 0;
+  for (int i = 0; i < numberOfProcesses; i++) {
+    averageWaitingTime += computeProcessWaitingTime(processes + i);
+  }
+  return averageWaitingTime / (float)numberOfProcesses;
+}
+
+float computeAverageProcessTurnAroundTime(Process processes[MAX_SIZE],
+                                          int numberOfProcesses) {
+  float averageTurnAroundTime = 0;
+  for (int i = 0; i < numberOfProcesses; i++) {
+    averageTurnAroundTime += computeProcessTurnAroundTime(processes + i);
+  }
+  return averageTurnAroundTime / (float)numberOfProcesses;
+}
+
+float computeAverageProcessResponseTime(Process processes[MAX_SIZE],
+                                        int numberOfProcesses) {
+  float averageResponseTime = 0;
+  for (int i = 0; i < numberOfProcesses; i++) {
+    averageResponseTime += computeProcessResponseTime(processes + i);
+  }
+  return averageResponseTime / (float)numberOfProcesses;
+}
+
 int main() {
   glfwInit();
   GLFWwindow *window =
@@ -152,9 +179,14 @@ int main() {
 
     ImGui::Spacing();
 
-    ImGui::TextUnformatted("Average Waiting Time: TODO");
-    ImGui::TextUnformatted("Average Turnaround Time: TODO");
-    ImGui::TextUnformatted("Average Reponse Time: TODO");
+    ImGui::Text("Average Waiting Time: %.2f",
+                computeAverageProcessWaitingTime(processes, numberOfProcesses));
+    ImGui::Text(
+        "Average Turn Around Time: %.2f",
+        computeAverageProcessTurnAroundTime(processes, numberOfProcesses));
+    ImGui::Text(
+        "Average Reponse Time: %.2f",
+        computeAverageProcessResponseTime(processes, numberOfProcesses));
 
     ImGui::End();
 
