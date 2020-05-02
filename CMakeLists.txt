@@ -46,7 +46,7 @@ target_link_libraries(imguiOpenGL
 )
 
 add_executable(schedularVisualizer
-  main.cpp
+  src/main.cpp
 )
 
 target_link_libraries(schedularVisualizer
